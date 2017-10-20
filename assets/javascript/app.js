@@ -1,26 +1,11 @@
-var number = 30;
-var intervalId;
+var number = 20;
+var timer;
 var correctAnswers = 0;
 var incorrectAnswers = 0;
 var currentAnswer;
-/*var trivia = {
-	question: "What fruit is tangy?",
-	choices: [{
-		answer: "Banana",
-		correct: false
-	}, {
-		answer: "Apple",
-		correct: false
-	}, {
-		answer: "Tomato",
-		correct: false
-	}, {
-		answer: "Orange",
-		correct: true
-	}]
-}*/
-$("#time-remaining").html("30 seconds left");
-//default text
+var currentQuestion = 0;
+
+
 var questionSet = [
 	{question: "Which fruit is tangy?", 
 	options:["Banana","Apple", "Tomato", "Orange"], 
@@ -49,10 +34,13 @@ function decrement() {
 	
 }
 function stop() {
-      clearInterval(intervalId);
-    }
+      clearInterval(timer);
+}
+
+
 function loadQuestion(x) {
-	number = 30;
+	number = 20;
+	timer = setInterval(decrement, 1000);
 	$("#question").html(questionSet[x].question);
 	currentAnswer = questionSet[x].answer;
 	$("#c-1").html(questionSet[x].options[0]);
@@ -66,33 +54,57 @@ function loadQuestion(x) {
 	$("#score").html("Correct answers: " + correctAnswers + " Incorrect answers: " + incorrectAnswers);
 
 }
-function logAnswer() {
-	var namek = $(this).attr("value");
-	console.log(namek);
-	if(namek != currentAnswer) {
-		incorrectAnswers++;
-		alert("Incorrect");
-		
-	}
-	else {
-		correctAnswers++;
-		alert("Correct");
+function logAnswer(x) {
+	console.log(x);
+	if(number > 0) {
+		if(x != currentAnswer) {
+			incorrectAnswers++;
+			$("#score").html("Correct answers: " + correctAnswers + " Incorrect answers: " + incorrectAnswers);
+			stop();
+			alert("Incorrect");
+		}
+		else {
+			correctAnswers++;
+			$("#score").html("Correct answers: " + correctAnswers + " Incorrect answers: " + incorrectAnswers);
+			stop();
+			alert("Correct");
 	
+		}
 	}
 }
 
 
-$(document).on("click", ".choice", logAnswer);
+$(document).on("click", ".choice", function(){
+	var namek = $(this).attr("value");
+	logAnswer(namek);
+	
+	currentQuestion++;
+	if(currentQuestion < questionSet.length) {
+		loadQuestion(currentQuestion);
+	}
+	else {
+		alert("You scored " + correctAnswers + " out of 5");
+	}
+	
 
-for (var i = 0; i < questionSet.length; i++) {
+});
 
-	intervalId = setInterval(decrement, 1000);
+loadQuestion(0);
+if(number == 0) {
+	incorrectAnswers++;
+	$("#score").html("Correct answers: " + correctAnswers + " Incorrect answers: " + incorrectAnswers);
+	stop();
+	alert("No answer");
+}
+/*for (var i = 0; i < questionSet.length; i++) {
+
+	
 	if(number == 0) {
 		incorrectAnswers++;
 		alert("No answer");
 		loadQuestion(i);
 	}
-}
+}*/
 
 
 
